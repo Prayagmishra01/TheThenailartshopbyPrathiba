@@ -146,43 +146,54 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    const runCounters = (container, animate = true) => {
+        const counters = container.querySelectorAll('.counter');
+        if (!counters.length || container.classList.contains('counted')) return;
+        container.classList.add('counted');
+        counters.forEach(counter => {
+            const target = +counter.getAttribute('data-target');
+            if (!animate) {
+                counter.innerText = target.toLocaleString();
+                counter.parentElement.style.opacity = 1;
+                return;
+            }
+
+            const duration = 2500;
+            let startTime = null;
+            
+            const update = (timestamp) => {
+                if (!startTime) startTime = timestamp;
+                const progress = Math.min((timestamp - startTime) / duration, 1);
+                const easeOut = 1 - Math.pow(1 - progress, 4);
+                const current = target * easeOut;
+                
+                counter.innerText = Math.ceil(current).toLocaleString();
+                counter.parentElement.style.opacity = Math.max(0.2, progress);
+                
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                } else {
+                    counter.innerText = target.toLocaleString();
+                    counter.parentElement.style.opacity = 1;
+                }
+            };
+            requestAnimationFrame(update);
+        });
+    };
+
     // Scroll Animations
     if (shouldReduceMotion) {
-        document.querySelectorAll('.fade-in, .stats-container').forEach(el => el.classList.add('appear'));
+        document.querySelectorAll('.fade-in, .stats-container').forEach(el => {
+            el.classList.add('appear');
+            runCounters(el, false);
+        });
     } else {
     const appearOptions = { threshold: 0.15, rootMargin: "0px 0px -50px 0px" };
     const appearOnScroll = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
             if (!entry.isIntersecting) return;
             entry.target.classList.add('appear');
-            const counters = entry.target.querySelectorAll('.counter');
-            if (counters.length && !entry.target.classList.contains('counted')) {
-                entry.target.classList.add('counted');
-                counters.forEach(counter => {
-                    const target = +counter.getAttribute('data-target');
-                    const duration = 2500;
-                    let startTime = null;
-                    
-                    const update = (timestamp) => {
-                        if (!startTime) startTime = timestamp;
-                        const progress = Math.min((timestamp - startTime) / duration, 1);
-                        
-                        const easeOut = 1 - Math.pow(1 - progress, 4);
-                        const current = target * easeOut;
-                        
-                        counter.innerText = Math.ceil(current).toLocaleString();
-                        counter.parentElement.style.opacity = Math.max(0.2, progress);
-                        
-                        if (progress < 1) {
-                            requestAnimationFrame(update);
-                        } else {
-                            counter.innerText = target.toLocaleString();
-                            counter.parentElement.style.opacity = 1;
-                        }
-                    };
-                    requestAnimationFrame(update);
-                });
-            }
+            runCounters(entry.target, true);
             observer.unobserve(entry.target);
         });
     }, appearOptions);
@@ -212,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const body = document.querySelector('body');
     const lightbox = document.createElement('div');
     lightbox.className = 'lightbox';
-    lightbox.innerHTML = '<button class="lightbox-nav lightbox-prev" type="button" aria-label="Previous image"><i class="fas fa-chevron-left"></i></button><span class="lightbox-close">&times;</span><div class="lightbox-content-container"></div><button class="lightbox-nav lightbox-next" type="button" aria-label="Next image"><i class="fas fa-chevron-right"></i></button>';
+    lightbox.innerHTML = '<button class="lightbox-nav lightbox-prev" type="button" aria-label="Previous image"><i class="fas fa-chevron-left"></i></button><button class="lightbox-close" type="button" aria-label="Back from image"><i class="fas fa-arrow-left"></i></button><div class="lightbox-content-container"></div><button class="lightbox-nav lightbox-next" type="button" aria-label="Next image"><i class="fas fa-chevron-right"></i></button>';
     body.appendChild(lightbox);
     
     const lightboxContainer = lightbox.querySelector('.lightbox-content-container');
@@ -221,6 +232,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const lightboxNext = lightbox.querySelector('.lightbox-next');
     let activeLightboxItems = [];
     let activeLightboxIndex = -1;
+    let lightboxHistoryOpen = false;
+    let touchStartX = 0;
+    let touchStartY = 0;
 
     const getMediaSource = (media) => media?.getAttribute('data-src') || media?.getAttribute('src') || media?.currentSrc || '';
 
@@ -301,6 +315,10 @@ document.addEventListener('DOMContentLoaded', () => {
         lightbox.classList.add('active');
         body.classList.add('lightbox-open');
         body.style.overflow = 'hidden';
+        if (!lightboxHistoryOpen) {
+            history.pushState({ lightbox: true }, '', window.location.href);
+            lightboxHistoryOpen = true;
+        }
     };
     
     // Global Click Listener for Images & Videos (Event Delegation)
@@ -336,6 +354,7 @@ document.addEventListener('DOMContentLoaded', () => {
         lightboxContainer.innerHTML = '';
         activeLightboxItems = [];
         activeLightboxIndex = -1;
+        lightboxHistoryOpen = false;
     };
 
     lightboxPrev.addEventListener('click', (e) => {
@@ -347,13 +366,39 @@ document.addEventListener('DOMContentLoaded', () => {
         e.stopPropagation();
         showLightboxItem(activeLightboxIndex + 1);
     });
+
+    lightboxContainer.addEventListener('touchstart', (e) => {
+        if (!lightbox.classList.contains('active') || e.touches.length !== 1) return;
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    lightboxContainer.addEventListener('touchend', (e) => {
+        if (!lightbox.classList.contains('active') || !touchStartX) return;
+        const touch = e.changedTouches[0];
+        const deltaX = touch.clientX - touchStartX;
+        const deltaY = touch.clientY - touchStartY;
+        touchStartX = 0;
+        touchStartY = 0;
+
+        if (Math.abs(deltaX) < 45 || Math.abs(deltaX) < Math.abs(deltaY) * 1.25) return;
+        if (deltaX < 0) {
+            showLightboxItem(activeLightboxIndex + 1);
+        } else {
+            showLightboxItem(activeLightboxIndex - 1);
+        }
+    }, { passive: true });
     
     lightbox.addEventListener('click', (e) => {
-        if(e.target === lightbox || e.target === lightboxClose || e.target === lightboxContainer) closeLightbox();
+        if(e.target === lightboxClose) history.back();
+    });
+
+    window.addEventListener('popstate', () => {
+        if (lightbox.classList.contains('active')) closeLightbox();
     });
     
     document.addEventListener('keydown', (e) => {
-        if(e.key === 'Escape' && lightbox.classList.contains('active')) closeLightbox();
+        if(e.key === 'Escape' && lightbox.classList.contains('active')) history.back();
         if(e.key === 'ArrowLeft' && lightbox.classList.contains('active')) showLightboxItem(activeLightboxIndex - 1);
         if(e.key === 'ArrowRight' && lightbox.classList.contains('active')) showLightboxItem(activeLightboxIndex + 1);
     });

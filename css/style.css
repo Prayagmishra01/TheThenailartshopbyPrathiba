@@ -271,7 +271,7 @@ textarea.form-control { min-height: 110px; resize: vertical; }
 .lightbox.active { opacity: 1; pointer-events: auto; }
 .lightbox img { max-width: 90%; max-height: 90vh; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); object-fit: contain; }
 .lightbox.active img { transform: scale(1); }
-.lightbox-close { position: absolute; top: 20px; right: 30px; font-size: 50px; color: white; cursor: pointer; text-shadow: 0 2px 5px rgba(0,0,0,0.5); z-index: 2001; transition: transform 0.2s; }
+.lightbox-close { position: absolute; top: 20px; left: 24px; width: 52px; height: 52px; border: 1px solid rgba(255,255,255,0.28); border-radius: 50%; background: rgba(255,255,255,0.14); font-size: 22px; color: white; cursor: pointer; text-shadow: 0 2px 5px rgba(0,0,0,0.5); z-index: 2001; transition: transform 0.2s; }
 .lightbox-close:hover { transform: scale(1.1); }
 .lightbox-nav {
     position: absolute;
@@ -493,7 +493,7 @@ main { padding-top: 75px; }
 .lightbox.active { opacity: 1; pointer-events: auto; }
 .lightbox img { max-width: 90%; max-height: 90vh; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); object-fit: contain; }
 .lightbox.active img { transform: scale(1); }
-.lightbox-close { position: absolute; top: 20px; right: 30px; font-size: 50px; color: white; cursor: pointer; text-shadow: 0 2px 5px rgba(0,0,0,0.5); z-index: 2001; transition: transform 0.2s; }
+.lightbox-close { position: absolute; top: 20px; left: 24px; width: 52px; height: 52px; border: 1px solid rgba(255,255,255,0.28); border-radius: 50%; background: rgba(255,255,255,0.14); font-size: 22px; color: white; cursor: pointer; text-shadow: 0 2px 5px rgba(0,0,0,0.5); z-index: 2001; transition: transform 0.2s; }
 .lightbox-close:hover { transform: scale(1.1); }
 .lightbox-nav {
     position: absolute;
