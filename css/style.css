@@ -1536,3 +1536,20 @@ main {
         padding-top: 132px !important;
     }
 }
+
+/* Keep the top edge fully covered; no pale strip above the floating navigation */
+.navbar {
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    border-top: 0 !important;
+    border-left: 0 !important;
+    border-right: 0 !important;
+    border-radius: 0 0 18px 18px !important;
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        border-radius: 0 0 16px 16px !important;
+    }
+}
