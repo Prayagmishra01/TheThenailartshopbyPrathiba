@@ -1491,3 +1491,48 @@ body {
 .page-header {
     background: var(--secondary) url('../images/studio/Studio-image.webp') center/cover !important;
 }
+
+/* Remove the top body strip so hero imagery sits cleanly behind the navigation */
+main {
+    padding-top: 0 !important;
+}
+
+.hero {
+    margin-top: 0 !important;
+    padding-top: clamp(150px, 18vw, 190px) !important;
+}
+
+.page-header {
+    margin-top: 0 !important;
+    padding-top: clamp(145px, 16vw, 175px) !important;
+}
+
+.services-editorial-band {
+    padding-top: 0 !important;
+}
+
+.services-editorial-content {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: clamp(28px, 5vw, 46px);
+    border: 1px solid rgba(118, 20, 47, 0.14);
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.86), rgba(255, 243, 244, 0.74));
+    box-shadow: 0 24px 70px rgba(118, 20, 47, 0.11);
+    text-align: center;
+}
+
+.services-editorial-content .seo-copy {
+    margin: 0 auto;
+    max-width: 780px;
+}
+
+@media (max-width: 768px) {
+    .hero {
+        padding-top: 138px !important;
+    }
+
+    .page-header {
+        padding-top: 132px !important;
+    }
+}
