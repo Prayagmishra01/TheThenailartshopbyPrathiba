@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
             mobileMenuToggle.classList.toggle('active');
             navLinks.classList.toggle('active');
             const isOpen = navLinks.classList.contains('active');
+            document.body.classList.toggle('menu-open', isOpen);
             mobileMenuToggle.setAttribute('aria-expanded', String(isOpen));
             mobileMenuToggle.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
         });
@@ -24,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (navLinks && navLinks.classList.contains('active')) {
                 navLinks.classList.remove('active');
                 mobileMenuToggle?.classList.remove('active');
+                document.body.classList.remove('menu-open');
                 mobileMenuToggle?.setAttribute('aria-expanded', 'false');
                 mobileMenuToggle?.setAttribute('aria-label', 'Open menu');
             }
@@ -251,11 +253,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             lightbox.classList.add('active');
+            body.classList.add('lightbox-open');
             body.style.overflow = 'hidden';
     });
     
     const closeLightbox = () => {
         lightbox.classList.remove('active');
+        body.classList.remove('lightbox-open');
         body.style.overflow = '';
         lightboxContainer.innerHTML = '';
     };
