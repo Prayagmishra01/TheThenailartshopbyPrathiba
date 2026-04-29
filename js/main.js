@@ -1,4 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const isMobileViewport = window.matchMedia('(max-width: 768px)').matches;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const shouldReduceMotion = isMobileViewport || prefersReducedMotion;
+
     // Mobile Menu
     const mobileMenuToggle = document.getElementById('mobileMenuToggle');
     const navLinks = document.getElementById('navLinks');
@@ -67,10 +71,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
                 
-                setTimeout(() => {
+                if (shouldReduceMotion) {
                     item.style.opacity = '1';
                     item.style.transform = 'scale(1)';
-                }, 50);
+                } else {
+                    setTimeout(() => {
+                        item.style.opacity = '1';
+                        item.style.transform = 'scale(1)';
+                    }, 50);
+                }
             });
             
             visibleCount += toShow.length;
@@ -82,22 +91,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 if (scrollObserver) scrollObserver.disconnect();
                 
-                scrollObserver = new IntersectionObserver((entries) => {
-                    if (entries[0].isIntersecting) {
-                        scrollObserver.disconnect();
-                        loadMore();
-                    }
-                }, { rootMargin: "300px" });
-                
-                scrollObserver.observe(triggerItem);
+                if (!shouldReduceMotion) {
+                    scrollObserver = new IntersectionObserver((entries) => {
+                        if (entries[0].isIntersecting) {
+                            scrollObserver.disconnect();
+                            loadMore();
+                        }
+                    }, { rootMargin: "300px" });
+                    
+                    scrollObserver.observe(triggerItem);
+                } else if (visibleCount < matchingItems.length) {
+                    loadMore();
+                }
             }
         };
         
         // Hide all initially
         items.forEach(item => {
             item.style.display = 'none';
-            item.style.opacity = '0';
-            item.style.transform = 'scale(0.8)';
+            item.style.opacity = shouldReduceMotion ? '1' : '0';
+            item.style.transform = shouldReduceMotion ? 'scale(1)' : 'scale(0.8)';
         });
         
         // Initial load
@@ -134,6 +147,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Scroll Animations
+    if (shouldReduceMotion) {
+        document.querySelectorAll('.fade-in, .stats-container').forEach(el => el.classList.add('appear'));
+    } else {
     const appearOptions = { threshold: 0.15, rootMargin: "0px 0px -50px 0px" };
     const appearOnScroll = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
@@ -172,6 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, appearOptions);
 
     document.querySelectorAll('.fade-in, .stats-container').forEach(el => appearOnScroll.observe(el));
+    }
     
     // Form processing
     const bookingForm = document.getElementById('bookingForm');
