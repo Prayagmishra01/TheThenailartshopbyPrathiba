@@ -195,11 +195,96 @@ document.addEventListener('DOMContentLoaded', () => {
     const body = document.querySelector('body');
     const lightbox = document.createElement('div');
     lightbox.className = 'lightbox';
-    lightbox.innerHTML = '<span class="lightbox-close">&times;</span><div class="lightbox-content-container"></div>';
+    lightbox.innerHTML = '<button class="lightbox-nav lightbox-prev" type="button" aria-label="Previous image"><i class="fas fa-chevron-left"></i></button><span class="lightbox-close">&times;</span><div class="lightbox-content-container"></div><button class="lightbox-nav lightbox-next" type="button" aria-label="Next image"><i class="fas fa-chevron-right"></i></button>';
     body.appendChild(lightbox);
     
     const lightboxContainer = lightbox.querySelector('.lightbox-content-container');
     const lightboxClose = lightbox.querySelector('.lightbox-close');
+    const lightboxPrev = lightbox.querySelector('.lightbox-prev');
+    const lightboxNext = lightbox.querySelector('.lightbox-next');
+    let activeLightboxItems = [];
+    let activeLightboxIndex = -1;
+
+    const getMediaSource = (media) => media?.getAttribute('data-src') || media?.getAttribute('src') || media?.currentSrc || '';
+
+    const getLightboxGroup = (media) => {
+        const explicitGroup = media.closest('[data-lightbox-group]')?.getAttribute('data-lightbox-group');
+        if (explicitGroup) return explicitGroup;
+
+        const filterItem = media.closest('.filter-item');
+        if (filterItem) {
+            const category = filterItem.getAttribute('data-category');
+            if (category) return category;
+
+            const classes = [...filterItem.classList].filter((name) => !['filter-item', 'masonry-item', 'gallery-item', 'img-hover', 'card-hover', 'all'].includes(name));
+            if (classes.length) return classes[0];
+        }
+
+        const source = getMediaSource(media).replace(/\\/g, '/');
+        const match = source.match(/(?:images|videos)\/([^/]+)/i);
+        if (match) {
+            return match[1].toLowerCase().replace(/\s+-\s+copy/g, '').replace(/\s+/g, '-');
+        }
+
+        return 'default';
+    };
+
+    const getLightboxItemsFor = (media) => {
+        const group = getLightboxGroup(media);
+        return [...document.querySelectorAll('img:not(.no-lightbox), video:not(.no-lightbox)')]
+            .filter((item) => {
+                if (item.getAttribute('alt') === 'Celebrity styled nails') return false;
+                if (!item.closest('.gallery-item, .masonry-item, .portfolio-grid, .gallery-grid, .reviews-grid')) return false;
+                return getLightboxGroup(item) === group;
+            });
+    };
+
+    const renderLightboxMedia = (media) => {
+        lightboxContainer.innerHTML = '';
+
+        if (media.tagName === 'IMG') {
+            const fullImg = document.createElement('img');
+            fullImg.src = getMediaSource(media);
+            fullImg.alt = media.alt || 'Enlarged view';
+            fullImg.onerror = function() {
+                this.src = 'https://placehold.co/1200x800/f4e1e1/800020?text=Image+Unavailable';
+                this.style.objectFit = 'contain';
+            };
+            lightboxContainer.appendChild(fullImg);
+        } else if (media.tagName === 'VIDEO') {
+            const fullVideo = document.createElement('video');
+            fullVideo.src = getMediaSource(media);
+            fullVideo.autoplay = true;
+            fullVideo.controls = true;
+            fullVideo.playsInline = true;
+            fullVideo.style.maxHeight = '90vh';
+            fullVideo.style.maxWidth = '90vw';
+            lightboxContainer.appendChild(fullVideo);
+        }
+
+        const canNavigate = activeLightboxItems.length > 1;
+        lightboxPrev.hidden = !canNavigate;
+        lightboxNext.hidden = !canNavigate;
+    };
+
+    const showLightboxItem = (index) => {
+        if (!activeLightboxItems.length) return;
+        activeLightboxIndex = (index + activeLightboxItems.length) % activeLightboxItems.length;
+        renderLightboxMedia(activeLightboxItems[activeLightboxIndex]);
+    };
+
+    const openLightbox = (media) => {
+        activeLightboxItems = getLightboxItemsFor(media);
+        activeLightboxIndex = activeLightboxItems.indexOf(media);
+        if (activeLightboxIndex < 0) {
+            activeLightboxItems = [media];
+            activeLightboxIndex = 0;
+        }
+        showLightboxItem(activeLightboxIndex);
+        lightbox.classList.add('active');
+        body.classList.add('lightbox-open');
+        body.style.overflow = 'hidden';
+    };
     
     // Global Click Listener for Images & Videos (Event Delegation)
     document.addEventListener('click', (e) => {
@@ -224,37 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         e.preventDefault();
-        lightboxContainer.innerHTML = ''; // Clear previous
-            
-            if (media.tagName === 'IMG') {
-                const fullImg = document.createElement('img');
-                // Use data-src for high quality if available, fallback to src
-                const source = media.getAttribute('data-src') || media.src;
-                fullImg.src = source;
-                fullImg.alt = media.alt || 'Enlarged view';
-                
-                // Fallback for broken images in lightbox
-                fullImg.onerror = function() {
-                    this.src = 'https://placehold.co/1200x800/f4e1e1/800020?text=Image+Unavailable';
-                    this.style.objectFit = 'contain';
-                };
-                
-                lightboxContainer.appendChild(fullImg);
-            } else if (media.tagName === 'VIDEO') {
-                const fullVideo = document.createElement('video');
-                fullVideo.src = media.getAttribute('data-src') || media.src;
-                fullVideo.autoplay = true;
-                fullVideo.controls = true;
-                fullVideo.playsInline = true;
-                fullVideo.style.maxHeight = '90vh';
-                fullVideo.style.maxWidth = '90vw';
-                
-                lightboxContainer.appendChild(fullVideo);
-            }
-            
-            lightbox.classList.add('active');
-            body.classList.add('lightbox-open');
-            body.style.overflow = 'hidden';
+        openLightbox(media);
     });
     
     const closeLightbox = () => {
@@ -262,7 +317,19 @@ document.addEventListener('DOMContentLoaded', () => {
         body.classList.remove('lightbox-open');
         body.style.overflow = '';
         lightboxContainer.innerHTML = '';
+        activeLightboxItems = [];
+        activeLightboxIndex = -1;
     };
+
+    lightboxPrev.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showLightboxItem(activeLightboxIndex - 1);
+    });
+
+    lightboxNext.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showLightboxItem(activeLightboxIndex + 1);
+    });
     
     lightbox.addEventListener('click', (e) => {
         if(e.target === lightbox || e.target === lightboxClose || e.target === lightboxContainer) closeLightbox();
@@ -270,6 +337,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     document.addEventListener('keydown', (e) => {
         if(e.key === 'Escape' && lightbox.classList.contains('active')) closeLightbox();
+        if(e.key === 'ArrowLeft' && lightbox.classList.contains('active')) showLightboxItem(activeLightboxIndex - 1);
+        if(e.key === 'ArrowRight' && lightbox.classList.contains('active')) showLightboxItem(activeLightboxIndex + 1);
     });
 
     // Video Scroll Observer

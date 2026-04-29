@@ -273,6 +273,33 @@ textarea.form-control { min-height: 110px; resize: vertical; }
 .lightbox.active img { transform: scale(1); }
 .lightbox-close { position: absolute; top: 20px; right: 30px; font-size: 50px; color: white; cursor: pointer; text-shadow: 0 2px 5px rgba(0,0,0,0.5); z-index: 2001; transition: transform 0.2s; }
 .lightbox-close:hover { transform: scale(1.1); }
+.lightbox-nav {
+    position: absolute;
+    top: 50%;
+    z-index: 2001;
+    width: 54px;
+    height: 54px;
+    border: 1px solid rgba(255,255,255,0.28);
+    border-radius: 50%;
+    background: rgba(255,255,255,0.14);
+    color: var(--white);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transform: translateY(-50%);
+    backdrop-filter: blur(12px);
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+.lightbox-nav:hover {
+    background: rgba(255,255,255,0.24);
+    transform: translateY(-50%) scale(1.05);
+}
+.lightbox-nav[hidden] {
+    display: none !important;
+}
+.lightbox-prev { left: clamp(14px, 4vw, 42px); }
+.lightbox-next { right: clamp(14px, 4vw, 42px); }
 
 /* Interactive Images */
 img:not(.no-lightbox), video:not(.no-lightbox) { cursor: zoom-in; }
@@ -468,6 +495,33 @@ main { padding-top: 75px; }
 .lightbox.active img { transform: scale(1); }
 .lightbox-close { position: absolute; top: 20px; right: 30px; font-size: 50px; color: white; cursor: pointer; text-shadow: 0 2px 5px rgba(0,0,0,0.5); z-index: 2001; transition: transform 0.2s; }
 .lightbox-close:hover { transform: scale(1.1); }
+.lightbox-nav {
+    position: absolute;
+    top: 50%;
+    z-index: 2001;
+    width: 54px;
+    height: 54px;
+    border: 1px solid rgba(255,255,255,0.28);
+    border-radius: 50%;
+    background: rgba(255,255,255,0.14);
+    color: var(--white);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transform: translateY(-50%);
+    backdrop-filter: blur(12px);
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+.lightbox-nav:hover {
+    background: rgba(255,255,255,0.24);
+    transform: translateY(-50%) scale(1.05);
+}
+.lightbox-nav[hidden] {
+    display: none !important;
+}
+.lightbox-prev { left: clamp(14px, 4vw, 42px); }
+.lightbox-next { right: clamp(14px, 4vw, 42px); }
 
 /* Interactive Images */
 img:not(.no-lightbox), video:not(.no-lightbox) { cursor: zoom-in; }
