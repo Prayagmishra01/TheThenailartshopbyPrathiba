@@ -1,4 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
+    if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+    }
+
+    if (!window.location.hash) {
+        requestAnimationFrame(() => window.scrollTo(0, 0));
+    }
+
     const isMobileViewport = window.matchMedia('(max-width: 768px)').matches;
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const shouldReduceMotion = isMobileViewport || prefersReducedMotion;
@@ -260,14 +268,24 @@ document.addEventListener('DOMContentLoaded', () => {
         return 'default';
     };
 
-    const getLightboxItemsFor = (media) => {
-        const group = getLightboxGroup(media);
-        return [...document.querySelectorAll('img:not(.no-lightbox), video:not(.no-lightbox)')]
+    const getScopedMediaItems = (media) => {
+        const scope = media.closest('.gallery-grid, .masonry-grid, .instagram-grid, .reviews-grid, .portfolio-grid, .section, main') || document;
+        return [...scope.querySelectorAll('img:not(.no-lightbox), video:not(.no-lightbox)')]
             .filter((item) => {
                 if (item.getAttribute('alt') === 'Celebrity styled nails') return false;
-                if (!item.closest('.gallery-item, .masonry-item, .portfolio-grid, .gallery-grid, .reviews-grid')) return false;
+                if (item.closest('a, button')) return false;
+                return item.closest('.gallery-item, .masonry-item, .portfolio-grid, .gallery-grid, .reviews-grid, .instagram-grid');
+            });
+    };
+
+    const getLightboxItemsFor = (media) => {
+        const group = getLightboxGroup(media);
+        const scopedItems = getScopedMediaItems(media);
+        const groupedItems = scopedItems
+            .filter((item) => {
                 return getLightboxGroup(item) === group;
             });
+        return groupedItems.length > 1 ? groupedItems : scopedItems;
     };
 
     const renderLightboxMedia = (media) => {
@@ -390,7 +408,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { passive: true });
     
     lightbox.addEventListener('click', (e) => {
-        if(e.target === lightboxClose) history.back();
+        if(e.target.closest('.lightbox-close')) history.back();
     });
 
     window.addEventListener('popstate', () => {
