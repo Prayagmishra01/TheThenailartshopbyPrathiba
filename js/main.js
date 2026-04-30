@@ -483,64 +483,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Academy Carousel Navigation (Infinite Loop)
+    // Academy Carousel Navigation
     const academyCarousel = document.getElementById('academyCarousel');
     const academyPrev = document.getElementById('academyPrev');
     const academyNext = document.getElementById('academyNext');
 
     if (academyCarousel && academyPrev && academyNext) {
-        // Infinite Scroll Setup: Clone items
-        const cards = Array.from(academyCarousel.querySelectorAll('.academy-card'));
-        cards.forEach(card => {
-            const cloneBefore = card.cloneNode(true);
-            const cloneAfter = card.cloneNode(true);
-            academyCarousel.insertBefore(cloneBefore, academyCarousel.firstChild);
-            academyCarousel.appendChild(cloneAfter);
-        });
-
-        // Initial scroll to the middle set
-        const scrollAmount = () => {
-            const card = academyCarousel.querySelector('.academy-card');
-            return card ? card.offsetWidth + 25 : 320;
-        };
-        
-        const centerCarousel = () => {
-            academyCarousel.scrollLeft = academyCarousel.scrollWidth / 3;
-        };
-
-        window.addEventListener('load', centerCarousel);
-        setTimeout(centerCarousel, 500);
-
         const handleScroll = (direction) => {
-            const step = scrollAmount();
-            const targetScroll = direction === 'next' 
-                ? academyCarousel.scrollLeft + step 
-                : academyCarousel.scrollLeft - step;
-            
-            academyCarousel.scrollTo({
-                left: targetScroll,
-                behavior: 'smooth'
-            });
+            const step = 345;
+            academyCarousel.scrollBy({ left: direction === 'next' ? step : -step, behavior: 'smooth' });
         };
 
         academyPrev.onclick = (e) => { e.preventDefault(); handleScroll('prev'); };
         academyNext.onclick = (e) => { e.preventDefault(); handleScroll('next'); };
-
-        const checkInfinite = () => {
-            const totalWidth = academyCarousel.scrollWidth;
-            const viewWidth = academyCarousel.clientWidth;
-            const scrollLeft = academyCarousel.scrollLeft;
-
-            // Jump back to middle if we go too far
-            if (scrollLeft <= 5) {
-                academyCarousel.scrollTo({ left: totalWidth / 3, behavior: 'auto' });
-            } else if (scrollLeft + viewWidth >= totalWidth - 5) {
-                academyCarousel.scrollTo({ left: (totalWidth / 3) - viewWidth + (totalWidth / 3), behavior: 'auto' });
-                // Simplified jump:
-                academyCarousel.scrollLeft = totalWidth / 3;
-            }
-        };
-
-        academyCarousel.addEventListener('scroll', checkInfinite);
     }
 });

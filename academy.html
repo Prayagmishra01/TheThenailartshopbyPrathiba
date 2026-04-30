@@ -17,32 +17,43 @@
     <meta property="og:title" content="Nail Art Academy Jaipur | Beauty Courses">
     <meta property="og:description" content="Join Tha Nail Art Shop By Pratibha™ Academy in Jaipur for professional nail art, hair extension, microblading, PMU and skin care courses with hands-on training, certification and business guidance.">
     <meta property="og:url" content="https://pratibhanails.com/academy.html">
-    <meta property="og:image" content="https://pratibhanails.com/images/about_pratibha_sharma.webp">
+    <meta property="og:image" content="https://pratibhanails.com/images/about/about_Pratibha_Sharma.webp">
     <meta property="og:image:alt" content="Tha Nail Art Shop By Pratibha™ luxury nail art and beauty studio in Jaipur">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Nail Art Academy Jaipur | Beauty Courses">
     <meta name="twitter:description" content="Join Tha Nail Art Shop By Pratibha™ Academy in Jaipur for professional nail art, hair extension, microblading, PMU and skin care courses with hands-on training, certification and business guidance.">
-    <meta name="twitter:image" content="https://pratibhanails.com/images/about_pratibha_sharma.webp">
+    <meta name="twitter:image" content="https://pratibhanails.com/images/about/about_Pratibha_Sharma.webp">
     <meta name="geo.region" content="IN-RJ">
     <meta name="geo.placename" content="Vaishali Nagar, Jaipur, Rajasthan">
     <meta name="geo.position" content="26.9112389;75.7394810">
     <meta name="ICBM" content="26.9112389, 75.7394810">
-    <link rel="icon" type="image/png" href="https://res.cloudinary.com/dz3ixer7i/image/upload/v1775990809/remove-photos-background-removed_vrqcuz.png">
+    <link rel="icon" type="image/webp" href="images/about/about_Pratibha_Sharma.webp">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://res.cloudinary.com">
-    <link rel="dns-prefetch" href="https://res.cloudinary.com">
     <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"></noscript>
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
     <link rel="preload" href="css/style.css" as="style">
     <link rel="stylesheet" href="css/style.css">
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4FRKKSPNCN"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-4FRKKSPNCN');
+      function loadAnalytics(){
+        if (window.__analyticsLoaded) return;
+        window.__analyticsLoaded = true;
+        const s = document.createElement('script');
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=G-4FRKKSPNCN';
+        s.async = true;
+        document.head.appendChild(s);
+        gtag('js', new Date());
+        gtag('config', 'G-4FRKKSPNCN');
+      }
+      window.addEventListener('load', () => {
+        if ('requestIdleCallback' in window) requestIdleCallback(loadAnalytics, { timeout: 3500 });
+        else setTimeout(loadAnalytics, 1800);
+      }, { once: true });
     </script>
     <script type="application/ld+json">{
   "@context": "https://schema.org",
@@ -52,7 +63,7 @@
       "@id": "https://pratibhanails.com/#beautysalon",
       "name": "Tha Nail Art Shop By Pratibha™",
       "url": "https://pratibhanails.com",
-      "image": "https://pratibhanails.com/images/about_pratibha_sharma.webp",
+      "image": "https://pratibhanails.com/images/about/about_Pratibha_Sharma.webp",
       "telephone": "+91 788 912 3473",
       "email": "Pratibhanails@gmail.com",
       "priceRange": "₹₹",
