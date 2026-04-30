@@ -1723,3 +1723,67 @@ body.lightbox-open {
     overflow: hidden !important;
     touch-action: none;
 }
+
+/* Final mobile navigation sizing and WhatsApp placement */
+@media (max-width: 991px) {
+    .nav-links {
+        top: 78px !important;
+        left: 10px !important;
+        right: 10px !important;
+        width: auto !important;
+        height: calc(100dvh - 96px) !important;
+        max-height: calc(100dvh - 96px) !important;
+        padding: clamp(18px, 5vw, 28px) clamp(14px, 4vw, 22px) !important;
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        align-content: start !important;
+        gap: clamp(10px, 2.8vw, 14px) !important;
+        overflow-y: auto !important;
+        border-radius: 22px !important;
+        background: rgba(255, 250, 246, 0.98) !important;
+        box-shadow: 0 24px 70px rgba(80, 37, 52, 0.18) !important;
+    }
+
+    .nav-links a {
+        width: 100% !important;
+        min-height: 48px !important;
+        padding: 12px 10px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center !important;
+        font-size: clamp(0.92rem, 3.7vw, 1.06rem) !important;
+        line-height: 1.15 !important;
+        border-radius: 14px !important;
+        background: rgba(255,255,255,0.74) !important;
+        border: 1px solid rgba(118, 20, 47, 0.1) !important;
+    }
+
+    .nav-links a.active,
+    .nav-links a:hover {
+        background: rgba(118, 20, 47, 0.11) !important;
+    }
+}
+
+@media (max-width: 520px) {
+    .nav-links {
+        grid-template-columns: 1fr !important;
+        gap: 9px !important;
+    }
+
+    .nav-links a {
+        min-height: 44px !important;
+        font-size: 1rem !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .floating-whatsapp {
+        bottom: 20px !important;
+        right: 20px !important;
+        width: 50px !important;
+        height: 50px !important;
+        font-size: 28px !important;
+        z-index: 999 !important;
+    }
+}
