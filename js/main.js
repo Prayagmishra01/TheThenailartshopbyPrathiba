@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const body = document.querySelector('body');
     const lightbox = document.createElement('div');
     lightbox.className = 'lightbox';
-    lightbox.innerHTML = '<button class="lightbox-nav lightbox-prev" type="button" aria-label="Previous image"><i class="fas fa-chevron-left"></i></button><button class="lightbox-close" type="button" aria-label="Back from image"><i class="fas fa-arrow-left"></i></button><div class="lightbox-content-container"></div><button class="lightbox-nav lightbox-next" type="button" aria-label="Next image"><i class="fas fa-chevron-right"></i></button>';
+    lightbox.innerHTML = '<button class="lightbox-nav lightbox-prev" type="button" aria-label="Previous image"><i class="fas fa-chevron-left"></i></button><button class="lightbox-close" type="button" aria-label="Close image"><i class="fas fa-times"></i></button><div class="lightbox-content-container"></div><button class="lightbox-nav lightbox-next" type="button" aria-label="Next image"><i class="fas fa-chevron-right"></i></button>';
     body.appendChild(lightbox);
     
     const lightboxContainer = lightbox.querySelector('.lightbox-content-container');
@@ -245,6 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let touchStartY = 0;
 
     const getMediaSource = (media) => media?.getAttribute('data-src') || media?.getAttribute('src') || media?.currentSrc || '';
+    const getMediaPoster = (media) => media?.getAttribute('poster') || media?.getAttribute('data-poster') || '';
 
     const getLightboxGroup = (media) => {
         const explicitGroup = media.closest('[data-lightbox-group]')?.getAttribute('data-lightbox-group');
@@ -303,6 +304,8 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (media.tagName === 'VIDEO') {
             const fullVideo = document.createElement('video');
             fullVideo.src = getMediaSource(media);
+            const poster = getMediaPoster(media);
+            if (poster) fullVideo.poster = poster;
             fullVideo.autoplay = true;
             fullVideo.controls = true;
             fullVideo.playsInline = true;
@@ -432,6 +435,11 @@ document.addEventListener('DOMContentLoaded', () => {
         entries.forEach(entry => {
             const video = entry.target;
             if (entry.isIntersecting) {
+                if (!video.getAttribute('src') && video.hasAttribute('data-src')) {
+                    video.src = video.getAttribute('data-src');
+                    video.removeAttribute('data-src');
+                    video.load();
+                }
                 video.play().catch(e => console.log('Autoplay prevented:', e));
             } else {
                 video.pause();
